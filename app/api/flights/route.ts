@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
     const feedDate = localDateStr(tomorrow)
 
     const results = await Promise.allSettled(
-      POPULAR_ROUTES.slice(0, 6).map(r =>
+      POPULAR_ROUTES.map(r =>
         searchFlights(r.dep.code, r.arr.code, feedDate, r.dep.name, r.arr.name)
       )
     )

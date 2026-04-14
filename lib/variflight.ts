@@ -8,28 +8,40 @@ const API_KEY = process.env.VARIFLIGHT_API_KEY!
 // Returns true if the API is out of quota or unavailable
 let apiQuotaExhausted = false
 
+const API_TIMEOUT_MS = 5000
+
 async function callApi(endpoint: string, params: Record<string, string>) {
   if (apiQuotaExhausted) throw new Error('quota_exhausted')
 
-  const res = await fetch(BASE_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-VARIFLIGHT-KEY': API_KEY,
-    },
-    body: JSON.stringify({ endpoint, params }),
-    cache: 'no-store',
-  })
-  if (!res.ok) throw new Error(`VariFlight API error: ${res.status}`)
-  const json = await res.json()
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), API_TIMEOUT_MS)
 
-  // 403 = Insufficient balance — mark quota exhausted for this process lifetime
-  if (json.code === 403) {
-    apiQuotaExhausted = true
-    throw new Error('quota_exhausted')
+  try {
+    const res = await fetch(BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-VARIFLIGHT-KEY': API_KEY,
+      },
+      body: JSON.stringify({ endpoint, params }),
+      cache: 'no-store',
+      signal: controller.signal,
+    })
+    clearTimeout(timer)
+    if (!res.ok) throw new Error(`VariFlight API error: ${res.status}`)
+    const json = await res.json()
+
+    if (json.code === 403) {
+      apiQuotaExhausted = true
+      throw new Error('quota_exhausted')
+    }
+    if (json.code !== 200) throw new Error(`VariFlight error: ${json.message}`)
+    return json.data
+  } catch (e: any) {
+    clearTimeout(timer)
+    if (e.name === 'AbortError') throw new Error('api_timeout')
+    throw e
   }
-  if (json.code !== 200) throw new Error(`VariFlight error: ${json.message}`)
-  return json.data
 }
 
 function parseItinerariesText(text: string, depCity: string, arrCity: string, date: string): FlightSummary {

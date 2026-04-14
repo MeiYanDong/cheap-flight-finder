@@ -62,6 +62,60 @@ export const MOCK_FLIGHTS: Record<string, FlightSummary> = {
       { flightNo: 'HU7781', airline: '海南航空', depCode: '', arrCode: '', depCity: '上海', arrCity: '西安', depAirport: '', arrAirport: '', depTime: '2026-04-12 14:30:00', arrTime: '2026-04-12 16:45:00', duration: '2h15m', transfer: false, cabin: '超值经济舱', price: 520 },
     ],
   },
+  'BJS:SYX:2026-04-12': {
+    depCityCode: 'BJS', arrCityCode: 'SYX',
+    depCity: '北京', arrCity: '三亚',
+    date: '2026-04-12', minPrice: 850, minDuration: '3h30m', totalFlights: 42,
+    flights: [
+      { flightNo: 'HU7181', airline: '海南航空', depCode: '', arrCode: '', depCity: '北京', arrCity: '三亚', depAirport: '', arrAirport: '', depTime: '2026-04-12 08:00:00', arrTime: '2026-04-12 11:30:00', duration: '3h30m', transfer: false, cabin: '经济舱', price: 850 },
+      { flightNo: 'CZ3129', airline: '中国南方航空', depCode: '', arrCode: '', depCity: '北京', arrCity: '三亚', depAirport: '', arrAirport: '', depTime: '2026-04-12 14:20:00', arrTime: '2026-04-12 17:55:00', duration: '3h35m', transfer: false, cabin: '经济舱', price: 920 },
+    ],
+  },
+  'SHA:SYX:2026-04-12': {
+    depCityCode: 'SHA', arrCityCode: 'SYX',
+    depCity: '上海', arrCity: '三亚',
+    date: '2026-04-12', minPrice: 680, minDuration: '2h50m', totalFlights: 38,
+    flights: [
+      { flightNo: '9C8999', airline: '春秋航空', depCode: '', arrCode: '', depCity: '上海', arrCity: '三亚', depAirport: '', arrAirport: '', depTime: '2026-04-12 06:30:00', arrTime: '2026-04-12 09:20:00', duration: '2h50m', transfer: false, cabin: '经济舱', price: 680 },
+      { flightNo: 'MU5387', airline: '中国东方航空', depCode: '', arrCode: '', depCity: '上海', arrCity: '三亚', depAirport: '', arrAirport: '', depTime: '2026-04-12 12:00:00', arrTime: '2026-04-12 14:55:00', duration: '2h55m', transfer: false, cabin: '经济舱', price: 760 },
+    ],
+  },
+  'CAN:BJS:2026-04-12': {
+    depCityCode: 'CAN', arrCityCode: 'BJS',
+    depCity: '广州', arrCity: '北京',
+    date: '2026-04-12', minPrice: 690, minDuration: '2h55m', totalFlights: 98,
+    flights: [
+      { flightNo: 'CZ3101', airline: '中国南方航空', depCode: '', arrCode: '', depCity: '广州', arrCity: '北京', depAirport: '', arrAirport: '', depTime: '2026-04-12 07:00:00', arrTime: '2026-04-12 09:55:00', duration: '2h55m', transfer: false, cabin: '经济舱', price: 690 },
+      { flightNo: 'CA1302', airline: '中国国际航空', depCode: '', arrCode: '', depCity: '广州', arrCity: '北京', depAirport: '', arrAirport: '', depTime: '2026-04-12 10:30:00', arrTime: '2026-04-12 13:30:00', duration: '3h', transfer: false, cabin: '经济舱', price: 780 },
+    ],
+  },
+  'CAN:CTU:2026-04-12': {
+    depCityCode: 'CAN', arrCityCode: 'CTU',
+    depCity: '广州', arrCity: '成都',
+    date: '2026-04-12', minPrice: 550, minDuration: '2h20m', totalFlights: 65,
+    flights: [
+      { flightNo: 'CZ3451', airline: '中国南方航空', depCode: '', arrCode: '', depCity: '广州', arrCity: '成都', depAirport: '', arrAirport: '', depTime: '2026-04-12 08:30:00', arrTime: '2026-04-12 10:50:00', duration: '2h20m', transfer: false, cabin: '超值经济舱', price: 550 },
+      { flightNo: '3U8746', airline: '四川航空', depCode: '', arrCode: '', depCity: '广州', arrCity: '成都', depAirport: '', arrAirport: '', depTime: '2026-04-12 15:00:00', arrTime: '2026-04-12 17:25:00', duration: '2h25m', transfer: false, cabin: '经济舱', price: 620 },
+    ],
+  },
+  'CTU:SHA:2026-04-12': {
+    depCityCode: 'CTU', arrCityCode: 'SHA',
+    depCity: '成都', arrCity: '上海',
+    date: '2026-04-12', minPrice: 590, minDuration: '2h35m', totalFlights: 70,
+    flights: [
+      { flightNo: '3U8971', airline: '四川航空', depCode: '', arrCode: '', depCity: '成都', arrCity: '上海', depAirport: '', arrAirport: '', depTime: '2026-04-12 07:15:00', arrTime: '2026-04-12 09:50:00', duration: '2h35m', transfer: false, cabin: '经济舱', price: 590 },
+      { flightNo: 'MU5406', airline: '中国东方航空', depCode: '', arrCode: '', depCity: '成都', arrCity: '上海', depAirport: '', arrAirport: '', depTime: '2026-04-12 11:00:00', arrTime: '2026-04-12 13:40:00', duration: '2h40m', transfer: false, cabin: '经济舱', price: 650 },
+    ],
+  },
+  'SZX:BJS:2026-04-12': {
+    depCityCode: 'SZX', arrCityCode: 'BJS',
+    depCity: '深圳', arrCity: '北京',
+    date: '2026-04-12', minPrice: 720, minDuration: '3h', totalFlights: 85,
+    flights: [
+      { flightNo: 'ZH9101', airline: '深圳航空', depCode: '', arrCode: '', depCity: '深圳', arrCity: '北京', depAirport: '', arrAirport: '', depTime: '2026-04-12 06:50:00', arrTime: '2026-04-12 09:50:00', duration: '3h', transfer: false, cabin: '经济舱', price: 720 },
+      { flightNo: 'CA1336', airline: '中国国际航空', depCode: '', arrCode: '', depCity: '深圳', arrCity: '北京', depAirport: '', arrAirport: '', depTime: '2026-04-12 13:00:00', arrTime: '2026-04-12 16:05:00', duration: '3h5m', transfer: false, cabin: '经济舱', price: 810 },
+    ],
+  },
 }
 
 // Mock price calendar data (Beijing -> Shanghai, next 14 days)

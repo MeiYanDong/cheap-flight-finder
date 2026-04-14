@@ -1,10 +1,8 @@
 export function getPriceTag(price: number, cabin: string): { label: string; color: string } {
-  // Rough discount estimation based on typical domestic prices
-  // Full economy price reference: BJS-SHA ~1200, BJS-CAN ~1800, BJS-CTU ~1600
-  if (price <= 300) return { label: '超低价', color: 'text-red-500' }
-  if (price <= 500) return { label: '低价', color: 'text-orange-500' }
-  if (price <= 800) return { label: '较低价', color: 'text-yellow-600' }
-  return { label: '正常价', color: 'text-gray-500' }
+  if (price <= 300) return { label: '超低价', color: 'text-danger' }
+  if (price <= 500) return { label: '低价', color: 'text-deal' }
+  if (price <= 800) return { label: '较低价', color: 'text-warning' }
+  return { label: '正常价', color: 'text-subtle' }
 }
 
 export function formatPrice(price: number): string {
@@ -31,17 +29,17 @@ export function getCtripUrl(depIATA: string, arrIATA: string, date: string): str
 }
 
 export function getQunarUrl(depCity: string, arrCity: string, date: string): string {
-  return `https://www.qunar.com/site/oneway.jsp?from=${encodeURIComponent(depCity)}&to=${encodeURIComponent(arrCity)}&date=${date}`
+  return `https://flight.qunar.com/site/oneway_list.htm?searchDepartureAirport=${encodeURIComponent(depCity)}&searchArrivalAirport=${encodeURIComponent(arrCity)}&searchDepartureTime=${date}&startSearch=true&from=flight_dom_search`
 }
 
 export function getPriceHeatColor(price: number, minPrice: number, maxPrice: number): string {
-  if (!price) return 'bg-gray-100 text-gray-400'
+  if (!price) return 'bg-surface-raised text-subtle'
   const ratio = (price - minPrice) / (maxPrice - minPrice || 1)
-  if (ratio <= 0.2) return 'bg-green-500 text-white'
+  if (ratio <= 0.2) return 'bg-success text-white'
   if (ratio <= 0.4) return 'bg-green-300 text-green-900'
-  if (ratio <= 0.6) return 'bg-yellow-300 text-yellow-900'
-  if (ratio <= 0.8) return 'bg-orange-400 text-white'
-  return 'bg-red-500 text-white'
+  if (ratio <= 0.6) return 'bg-amber-300 text-amber-900'
+  if (ratio <= 0.8) return 'bg-warning text-white'
+  return 'bg-danger text-white'
 }
 
 export function addDays(date: Date, days: number): Date {

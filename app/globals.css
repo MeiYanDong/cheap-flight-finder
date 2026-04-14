@@ -1,26 +1,105 @@
 @import "tailwindcss";
 
+/* ── Design Tokens ─────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Surfaces */
+  --background:        #f8fafc;
+  --surface:           #ffffff;
+  --surface-raised:    #f1f5f9;
+  --surface-overlay:   #e2e8f0;
+
+  /* Borders */
+  --border:            #e2e8f0;
+  --border-strong:     #cbd5e1;
+
+  /* Text */
+  --foreground:        #0f172a;
+  --foreground-muted:  #64748b;
+  --foreground-subtle: #94a3b8;
+
+  /* Brand — Indigo */
+  --primary:           #4f46e5;
+  --primary-hover:     #4338ca;
+  --primary-light:     #eef2ff;
+  --primary-fg:        #ffffff;
+
+  /* Deal accent — Amber */
+  --deal:              #d97706;
+  --deal-hover:        #b45309;
+  --deal-light:        #fffbeb;
+  --deal-fg:           #ffffff;
+
+  /* Status */
+  --success:           #16a34a;
+  --success-light:     #f0fdf4;
+  --warning:           #ea580c;
+  --warning-light:     #fff7ed;
+  --danger:            #dc2626;
+  --danger-light:      #fef2f2;
+
+  /* Radius */
+  --radius-sm:         6px;
+  --radius:            10px;
+  --radius-lg:         14px;
+  --radius-xl:         18px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background:       var(--background);
+  --color-foreground:       var(--foreground);
+  --color-surface:          var(--surface);
+  --color-surface-raised:   var(--surface-raised);
+  --color-surface-overlay:  var(--surface-overlay);
+  --color-border:           var(--border);
+  --color-border-strong:    var(--border-strong);
+  --color-muted:            var(--foreground-muted);
+  --color-subtle:           var(--foreground-subtle);
+  --color-primary:          var(--primary);
+  --color-primary-hover:    var(--primary-hover);
+  --color-primary-light:    var(--primary-light);
+  --color-deal:             var(--deal);
+  --color-deal-hover:       var(--deal-hover);
+  --color-deal-light:       var(--deal-light);
+  --color-success:          var(--success);
+  --color-success-light:    var(--success-light);
+  --color-warning:          var(--warning);
+  --color-warning-light:    var(--warning-light);
+  --font-sans: system-ui, -apple-system, "PingFang SC", "Hiragino Sans GB", sans-serif;
+}
+
+/* ── Force light mode — no dark mode support ───────────────── */
+:root {
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background:        #f8fafc;
+    --surface:           #ffffff;
+    --surface-raised:    #f1f5f9;
+    --surface-overlay:   #e2e8f0;
+    --border:            #e2e8f0;
+    --border-strong:     #cbd5e1;
+    --foreground:        #0f172a;
+    --foreground-muted:  #64748b;
+    --foreground-subtle: #94a3b8;
   }
 }
 
+/* ── Base ──────────────────────────────────────────────────── */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: system-ui, -apple-system, "PingFang SC", "Hiragino Sans GB", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Flight card stagger entrance ─────────────────────────── */
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.flight-card-enter {
+  animation: slide-up 0.3s ease both;
 }

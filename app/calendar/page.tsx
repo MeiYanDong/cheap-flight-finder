@@ -11,7 +11,7 @@ function CalendarContent() {
   const [arr, setArr] = useState(params.get('arr') || 'SHA')
   const [depCity, setDepCity] = useState(params.get('depCity') || '北京')
   const [arrCity, setArrCity] = useState(params.get('arrCity') || '上海')
-  const [searching, setSearching] = useState(!!(params.get('dep') && params.get('arr')))
+  const [searching, setSearching] = useState(true) // default show BJS->SHA
   const [searchKey, setSearchKey] = useState(0)
 
   function swap() {
@@ -25,19 +25,11 @@ function CalendarContent() {
   }
 
   return (
-    <>
-      <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white">
-        <div className="max-w-5xl mx-auto px-6 py-10">
-          <h1 className="text-4xl font-bold tracking-tight mb-2">价格日历</h1>
-          <p className="text-blue-200">查看未来30天最低参考价，找到最便宜的出行日期</p>
-        </div>
-      </div>
-
-      <div className="max-w-5xl mx-auto px-6 py-8">
+    <div className="max-w-5xl mx-auto px-6 py-6">
       {/* Search bar */}
-      <div className="bg-white rounded-xl border border-gray-100 p-5 mb-6 flex items-end gap-3">
+      <div className="bg-white rounded-xl border border-border p-5 mb-5 flex items-end gap-3 shadow-sm">
         <div className="flex-1">
-          <label className="block text-xs text-gray-500 mb-1">出发城市</label>
+          <label className="block text-xs text-subtle mb-1.5 font-medium">出发城市</label>
           <select
             value={depCity}
             onChange={e => {
@@ -45,18 +37,21 @@ function CalendarContent() {
               setDepCity(e.target.value)
               setDep(city?.code || 'BJS')
             }}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+            className="w-full border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary bg-white"
           >
             {CITIES.map(c => <option key={c.code} value={c.name}>{c.name}</option>)}
           </select>
         </div>
 
-        <button onClick={swap} className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 mb-0.5">
-          <ArrowLeftRight className="w-4 h-4 text-gray-500" />
+        <button
+          onClick={swap}
+          className="p-2 rounded-lg border border-border hover:bg-surface-raised mb-0.5 transition-colors"
+        >
+          <ArrowLeftRight className="w-4 h-4 text-muted" />
         </button>
 
         <div className="flex-1">
-          <label className="block text-xs text-gray-500 mb-1">目的地</label>
+          <label className="block text-xs text-subtle mb-1.5 font-medium">目的地</label>
           <select
             value={arrCity}
             onChange={e => {
@@ -64,7 +59,7 @@ function CalendarContent() {
               setArrCity(e.target.value)
               setArr(city?.code || 'SHA')
             }}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+            className="w-full border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary bg-white"
           >
             {CITIES.map(c => <option key={c.code} value={c.name}>{c.name}</option>)}
           </select>
@@ -72,7 +67,7 @@ function CalendarContent() {
 
         <button
           onClick={search}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors"
+          className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors"
         >
           <Search className="w-4 h-4" />
           查询
@@ -81,32 +76,35 @@ function CalendarContent() {
 
       {searching && (
         <div key={searchKey}>
-          <div className="mb-3 text-sm text-gray-600 flex items-center justify-between">
+          <div className="mb-3 text-sm text-muted flex items-center justify-between">
             <span>
-              <span className="font-semibold">{depCity}</span>
-              <span className="mx-2 text-gray-400">→</span>
-              <span className="font-semibold">{arrCity}</span>
-              <span className="ml-2 text-gray-400">未来30天价格参考</span>
+              <span className="font-semibold text-foreground">{depCity}</span>
+              <span className="mx-2 text-subtle">→</span>
+              <span className="font-semibold text-foreground">{arrCity}</span>
+              <span className="ml-2 text-subtle">未来30天价格参考</span>
             </span>
-            <span className="text-xs text-gray-400">价格为参考价，实际以购票平台为准</span>
+            <span className="text-xs text-subtle">价格为参考价，实际以购票平台为准</span>
           </div>
           <PriceCalendar dep={dep} arr={arr} depCity={depCity} arrCity={arrCity} />
         </div>
       )}
 
       {!searching && (
-        <div className="text-center py-16 text-gray-400">
-          <p>选择出发城市和目的地，查看价格日历</p>
+        <div className="text-center py-20 text-subtle">
+          <p className="text-sm">选择出发城市和目的地，查看价格日历</p>
         </div>
       )}
-      </div>
-    </>
+    </div>
   )
 }
 
 export default function CalendarPage() {
   return (
-    <Suspense>
+    <Suspense fallback={
+      <div className="max-w-5xl mx-auto px-6 py-6">
+        <div className="bg-white rounded-xl border border-border p-5 h-20 animate-pulse" />
+      </div>
+    }>
       <CalendarContent />
     </Suspense>
   )

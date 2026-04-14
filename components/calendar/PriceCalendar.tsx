@@ -4,7 +4,7 @@ import { getPriceHeatColor, formatPrice } from '@/lib/price-utils'
 import { addDays, formatDateKey } from '@/lib/price-utils'
 import { AIRLINE_PROMOTIONS } from '@/lib/airline-promotions'
 import FlightCard from '@/components/feed/FlightCard'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react'
 
 interface PriceCalendarProps {
   dep: string
@@ -16,34 +16,49 @@ interface PriceCalendarProps {
 export default function PriceCalendar({ dep, arr, depCity, arrCity }: PriceCalendarProps) {
   const [calendar, setCalendar] = useState<Record<string, number | null>>({})
   const [loading, setLoading] = useState(true)
+  const [calendarError, setCalendarError] = useState('')
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [selectedFlights, setSelectedFlights] = useState<any[]>([])
   const [loadingFlights, setLoadingFlights] = useState(false)
+  const [flightError, setFlightError] = useState('')
   const [monthOffset, setMonthOffset] = useState(0)
 
   useEffect(() => {
     if (!dep || !arr) return
     setLoading(true)
+    setCalendarError('')
     fetch(`/api/calendar?dep=${dep}&arr=${arr}&depCity=${depCity}&arrCity=${arrCity}&days=30`)
       .then(r => r.json())
-      .then(d => { setCalendar(d.calendar || {}); setLoading(false) })
-      .catch(() => setLoading(false))
+      .then(d => {
+        if (d.error) throw new Error(d.error)
+        setCalendar(d.calendar || {})
+        setLoading(false)
+      })
+      .catch((e) => {
+        setCalendarError(e.message || '价格数据加载失败')
+        setLoading(false)
+      })
   }, [dep, arr])
 
   async function selectDate(date: string) {
     setSelectedDate(date)
     setLoadingFlights(true)
+    setFlightError('')
     try {
       const res = await fetch(`/api/flights?dep=${dep}&arr=${arr}&depCity=${depCity}&arrCity=${arrCity}&date=${date}`)
       const data = await res.json()
+      if (data.error) throw new Error(data.error)
       setSelectedFlights(data.flights || [])
-    } catch { setSelectedFlights([]) }
+    } catch (e: any) {
+      setFlightError(e.message || '航班数据加载失败')
+      setSelectedFlights([])
+    }
     setLoadingFlights(false)
   }
 
   const prices = Object.values(calendar).filter((p): p is number => p !== null && p > 0)
-  const minPrice = Math.min(...prices)
-  const maxPrice = Math.max(...prices)
+  const minPrice = prices.length ? Math.min(...prices) : 0
+  const maxPrice = prices.length ? Math.max(...prices) : 0
 
   const today = new Date()
   const displayMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1)
@@ -53,40 +68,51 @@ export default function PriceCalendar({ dep, arr, depCity, arrCity }: PriceCalen
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const weekDays = ['日', '一', '二', '三', '四', '五', '六']
 
-  // Build promotion day lookup
+  // Promotion days for the displayed month only
   const promotionDays = new Set(AIRLINE_PROMOTIONS.map(p => p.day))
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Month navigation */}
-      <div className="bg-white rounded-xl border border-gray-100 p-5">
+      <div className="bg-white rounded-xl border border-border p-5">
         <div className="flex items-center justify-between mb-4">
-          <button onClick={() => setMonthOffset(o => o - 1)} disabled={monthOffset <= 0}
-            className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30">
-            <ChevronLeft className="w-5 h-5" />
+          <button
+            onClick={() => setMonthOffset(o => o - 1)}
+            disabled={monthOffset <= 0}
+            className="p-1.5 rounded-lg hover:bg-surface-raised disabled:opacity-30 transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5 text-muted" />
           </button>
           <div className="text-center">
-            <h3 className="font-semibold text-gray-900">{year}年{month + 1}月</h3>
-            <p className="text-xs text-gray-400 mt-0.5">🎯 = 航司会员日，可能有额外优惠</p>
+            <h3 className="font-semibold text-foreground">{year}年{month + 1}月</h3>
+            <p className="text-xs text-subtle mt-0.5">🎯 = 航司会员日</p>
           </div>
-          <button onClick={() => setMonthOffset(o => o + 1)} disabled={monthOffset >= 1}
-            className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30">
-            <ChevronRight className="w-5 h-5" />
+          <button
+            onClick={() => setMonthOffset(o => o + 1)}
+            disabled={monthOffset >= 1}
+            className="p-1.5 rounded-lg hover:bg-surface-raised disabled:opacity-30 transition-colors"
+          >
+            <ChevronRight className="w-5 h-5 text-muted" />
           </button>
         </div>
 
         {/* Weekday headers */}
         <div className="grid grid-cols-7 mb-2">
           {weekDays.map(d => (
-            <div key={d} className="text-center text-xs font-medium text-gray-400 py-1">{d}</div>
+            <div key={d} className="text-center text-xs font-medium text-subtle py-1">{d}</div>
           ))}
         </div>
 
         {/* Calendar grid */}
-        {loading ? (
+        {calendarError ? (
+          <div className="flex items-center gap-2 bg-danger-light rounded-xl px-4 py-3 text-sm text-danger">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            {calendarError}
+          </div>
+        ) : loading ? (
           <div className="grid grid-cols-7 gap-1">
             {[...Array(35)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />
+              <div key={i} className="h-16 bg-surface-raised rounded-lg animate-pulse" />
             ))}
           </div>
         ) : (
@@ -106,10 +132,10 @@ export default function PriceCalendar({ dep, arr, depCity, arrCity }: PriceCalen
                   onClick={() => !isPast && price && selectDate(date)}
                   disabled={isPast || !price}
                   className={`h-16 rounded-lg flex flex-col items-center justify-center text-xs transition-all border-2 relative ${
-                    isSelected ? 'border-blue-500 scale-105 shadow-md' : 'border-transparent'
+                    isSelected ? 'border-primary scale-105 shadow-md' : 'border-transparent'
                   } ${
                     isPast || !price
-                      ? 'bg-gray-50 text-gray-300 cursor-not-allowed'
+                      ? 'bg-surface-raised text-subtle cursor-not-allowed'
                       : `${getPriceHeatColor(price, minPrice, maxPrice)} cursor-pointer hover:scale-105 hover:shadow-sm`
                   }`}
                 >
@@ -127,40 +153,47 @@ export default function PriceCalendar({ dep, arr, depCity, arrCity }: PriceCalen
         )}
 
         {/* Legend */}
-        <div className="flex items-center gap-3 mt-4 justify-end">
-          <span className="text-xs text-gray-400">价格：</span>
-          {['bg-green-500', 'bg-green-300', 'bg-yellow-300', 'bg-orange-400', 'bg-red-500'].map((c, i) => (
-            <div key={i} className={`w-4 h-4 rounded ${c}`} />
-          ))}
-          <span className="text-xs text-gray-400">低 → 高</span>
-        </div>
+        {!calendarError && !loading && (
+          <div className="flex items-center gap-2 mt-4 justify-end">
+            <span className="text-xs text-subtle">价格：</span>
+            {['bg-success', 'bg-green-300', 'bg-amber-300', 'bg-warning', 'bg-danger'].map((c, i) => (
+              <div key={i} className={`w-4 h-4 rounded ${c}`} />
+            ))}
+            <span className="text-xs text-subtle">低 → 高</span>
+          </div>
+        )}
       </div>
 
       {/* Selected date flights */}
       {selectedDate && (
         <div>
-          <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+          <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
             {selectedDate} 可用航班
             {promotionDays.has(new Date(selectedDate).getDate()) && (
-              <span className="text-xs bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full font-medium">
+              <span className="text-xs bg-deal-light text-deal px-2 py-0.5 rounded-full font-medium">
                 🎯 航司会员日，建议同时查看航司官网
               </span>
             )}
           </h3>
-          {loadingFlights ? (
-            <div className="space-y-3">
+          {flightError ? (
+            <div className="flex items-center gap-2 bg-danger-light rounded-xl px-4 py-3 text-sm text-danger">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              {flightError}
+            </div>
+          ) : loadingFlights ? (
+            <div className="space-y-2.5">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="bg-white rounded-xl border p-5 animate-pulse h-24" />
+                <div key={i} className="bg-white rounded-xl border border-border p-5 animate-pulse h-24" />
               ))}
             </div>
           ) : selectedFlights.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {selectedFlights.map((f, i) => (
-                <FlightCard key={i} flight={f} date={selectedDate} />
+                <FlightCard key={i} flight={f} date={selectedDate} index={i} />
               ))}
             </div>
           ) : (
-            <div className="text-center py-10 text-gray-400 bg-white rounded-xl border">
+            <div className="text-center py-10 text-subtle bg-white rounded-xl border border-border">
               该日期暂无可用航班数据
             </div>
           )}
@@ -169,4 +202,3 @@ export default function PriceCalendar({ dep, arr, depCity, arrCity }: PriceCalen
     </div>
   )
 }
-
