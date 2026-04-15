@@ -70,7 +70,7 @@ export default function AirlineCalendar() {
       </div>
 
       {/* Monthly calendar */}
-      <div className="bg-white rounded-xl border border-border p-6">
+      <div className="bg-white rounded-xl border border-border p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-5">
           <Calendar className="w-4 h-4 text-primary" />
           <h2 className="font-semibold text-foreground">
@@ -94,7 +94,7 @@ export default function AirlineCalendar() {
             return (
               <div
                 key={day}
-                className={`min-h-[60px] rounded-lg p-1.5 ${
+                className={`min-h-[44px] sm:min-h-[60px] rounded-lg p-1 sm:p-1.5 ${
                   isToday ? 'bg-primary text-white' : promos ? 'bg-surface-raised' : ''
                 }`}
               >

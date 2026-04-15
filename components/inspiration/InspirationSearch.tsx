@@ -49,7 +49,7 @@ export default function InspirationSearch() {
             ¥{budget} 从{depCity}出发，能飞哪里？
           </h2>
         </div>
-        <div className="flex flex-wrap gap-4 items-end">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4 sm:items-end">
           <div>
             <label className="block text-xs font-medium text-subtle mb-1.5">出发城市</label>
             <select
@@ -59,7 +59,7 @@ export default function InspirationSearch() {
                 setDepCity(e.target.value)
                 setDepCode(city?.code || 'BJS')
               }}
-              className="border border-border rounded-lg px-3 py-2 text-sm font-medium text-foreground focus:outline-none focus:border-primary bg-white"
+              className="w-full sm:w-auto border border-border rounded-lg px-3 py-2 text-sm font-medium text-foreground focus:outline-none focus:border-primary bg-white"
             >
               {CITIES.slice(0, 10).map(c => (
                 <option key={c.code} value={c.name}>{c.name}</option>
@@ -73,7 +73,7 @@ export default function InspirationSearch() {
                 <button
                   key={b}
                   onClick={() => setBudget(b)}
-                  className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  className={`flex-1 sm:flex-none px-3 sm:px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
                     budget === b
                       ? 'bg-primary text-white shadow-sm'
                       : 'bg-surface-raised text-muted hover:text-foreground'
@@ -87,7 +87,7 @@ export default function InspirationSearch() {
           <button
             onClick={search}
             disabled={loading}
-            className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-60"
+            className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-60"
           >
             <Search className="w-4 h-4" />
             {loading ? '搜索中...' : '探索目的地'}

@@ -495,7 +495,7 @@ cheap-flight-finder/
 
 ### 后续优化
 
-- [ ] 部署到 Vercel
+- [x] 部署到 Vercel（https://cheap-flight-finder-omega.vercel.app）
 - [ ] 移动端基础适配
 - [ ] 往返模式 + ±3天弹性对比
 - [ ] Mock 日历数据覆盖未来30天

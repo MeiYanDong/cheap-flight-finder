@@ -4,7 +4,8 @@ import { getPriceHeatColor, formatPrice } from '@/lib/price-utils'
 import { addDays, formatDateKey } from '@/lib/price-utils'
 import { AIRLINE_PROMOTIONS } from '@/lib/airline-promotions'
 import FlightCard from '@/components/feed/FlightCard'
-import { ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react'
+import { ChevronLeft, ChevronRight, AlertCircle, TrendingDown } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface PriceCalendarProps {
   dep: string
@@ -175,6 +176,71 @@ export default function PriceCalendar({ dep, arr, depCity, arrCity }: PriceCalen
               </span>
             )}
           </h3>
+
+          {/* ±3 day flex comparison */}
+          {(() => {
+            const base = new Date(selectedDate)
+            const offsets = [-3, -2, -1, 0, 1, 2, 3]
+            const compareDates = offsets.map(o => {
+              const d = new Date(base)
+              d.setDate(d.getDate() + o)
+              return formatDateKey(d)
+            })
+            const comparePrices = compareDates.map(d => calendar[d] ?? null)
+            const validPrices = comparePrices.filter((p): p is number => p !== null)
+            const minCompare = validPrices.length ? Math.min(...validPrices) : 0
+
+            return (
+              <div className="bg-white rounded-xl border border-border p-4 mb-4">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <TrendingDown className="w-3.5 h-3.5 text-primary" />
+                  <span className="text-xs font-semibold text-foreground">前后3天价格对比</span>
+                  <span className="text-xs text-subtle ml-1">点击切换日期</span>
+                </div>
+                <div className="grid grid-cols-7 gap-1">
+                  {compareDates.map((date, i) => {
+                    const price = comparePrices[i]
+                    const isSelected = date === selectedDate
+                    const isCheapest = price !== null && price === minCompare && validPrices.length > 1
+                    const isPast = new Date(date) < new Date(new Date().toDateString())
+                    const d = new Date(date)
+                    const label = `${d.getMonth() + 1}/${d.getDate()}`
+                    const dowLabels = ['日', '一', '二', '三', '四', '五', '六']
+                    const dow = dowLabels[d.getDay()]
+
+                    return (
+                      <button
+                        key={date}
+                        onClick={() => !isPast && price && selectDate(date)}
+                        disabled={isPast || !price}
+                        className={cn(
+                          'flex flex-col items-center py-2 px-1 rounded-lg text-xs transition-all border-2',
+                          isSelected
+                            ? 'border-primary bg-primary-light'
+                            : 'border-transparent hover:border-border',
+                          isPast || !price ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                        )}
+                      >
+                        <span className="text-subtle font-medium">{dow}</span>
+                        <span className={cn('font-semibold mt-0.5', isSelected ? 'text-primary' : 'text-foreground')}>{label}</span>
+                        {price ? (
+                          <span className={cn(
+                            'font-bold mt-1',
+                            isCheapest ? 'text-success' : isSelected ? 'text-primary' : 'text-deal'
+                          )}>
+                            ¥{price}
+                          </span>
+                        ) : (
+                          <span className="text-subtle mt-1">—</span>
+                        )}
+                        {isCheapest && <span className="text-[9px] text-success font-semibold mt-0.5">最低</span>}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })()}
           {flightError ? (
             <div className="flex items-center gap-2 bg-danger-light rounded-xl px-4 py-3 text-sm text-danger">
               <AlertCircle className="w-4 h-4 shrink-0" />

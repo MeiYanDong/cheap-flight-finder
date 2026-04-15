@@ -34,7 +34,7 @@ export default function FilterBar({ onFilter }: FilterBarProps) {
   }
 
   return (
-    <div className="bg-white border border-border rounded-xl px-5 py-3 flex flex-wrap items-center gap-5 shadow-sm">
+    <div className="bg-white border border-border rounded-xl px-4 sm:px-5 py-3 flex flex-wrap items-center gap-3 sm:gap-5 shadow-sm">
       {/* Departure city */}
       <div className="flex items-center gap-1.5 relative">
         <MapPin className="w-3.5 h-3.5 text-subtle shrink-0" />
@@ -51,7 +51,7 @@ export default function FilterBar({ onFilter }: FilterBarProps) {
         <ChevronDown className="w-3 h-3 text-subtle absolute right-0 pointer-events-none" />
       </div>
 
-      <div className="w-px h-4 bg-border shrink-0" />
+      <div className="hidden sm:block w-px h-4 bg-border shrink-0" />
 
       {/* Price limit */}
       <div className="flex items-center gap-1.5">
@@ -71,7 +71,7 @@ export default function FilterBar({ onFilter }: FilterBarProps) {
         ))}
       </div>
 
-      <div className="w-px h-4 bg-border shrink-0" />
+      <div className="hidden sm:block w-px h-4 bg-border shrink-0" />
 
       {/* Sort */}
       <div className="flex items-center gap-1.5 ml-auto">

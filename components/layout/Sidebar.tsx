@@ -7,7 +7,7 @@ export default function Sidebar() {
   const promotions = getSortedUpcomingPromotions().slice(0, 4)
 
   return (
-    <aside className="w-56 shrink-0 space-y-3">
+    <aside className="w-full lg:w-56 shrink-0 space-y-3">
       {/* Airline promotion countdown */}
       <div className="bg-white border border-border rounded-xl overflow-hidden">
         <div className="px-4 py-3 flex items-center gap-2 border-b border-border">

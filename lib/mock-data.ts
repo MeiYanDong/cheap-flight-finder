@@ -118,13 +118,32 @@ export const MOCK_FLIGHTS: Record<string, FlightSummary> = {
   },
 }
 
-// Mock price calendar data (Beijing -> Shanghai, next 14 days)
-export const MOCK_CALENDAR: Record<string, number> = {
-  '2026-04-12': 470, '2026-04-13': 450, '2026-04-14': 480,
-  '2026-04-15': 450, '2026-04-16': 490, '2026-04-17': 490,
-  '2026-04-18': 390, '2026-04-19': 420, '2026-04-20': 560,
-  '2026-04-21': 580, '2026-04-22': 490, '2026-04-23': 470,
-  '2026-04-24': 460, '2026-04-25': 450,
+// Deterministic mock calendar prices for any route and date range
+// Prices vary by day-of-week and day-of-month, no randomness
+export function getMockCalendarPrices(dep: string, arr: string, dates: string[]): Record<string, number> {
+  const mockEntry = Object.values(MOCK_FLIGHTS).find(
+    m => m.depCityCode === dep && m.arrCityCode === arr
+  )
+  const basePrice = mockEntry?.minPrice || 600
+
+  // Periodic variation by day-of-month index (repeating pattern)
+  const periodicDelta = [0, -0.08, -0.05, 0.03, 0.07, -0.10, 0.05, 0.02, -0.06, 0.08, -0.03, 0.04, -0.09, 0.06, 0.01]
+
+  const result: Record<string, number> = {}
+  dates.forEach(date => {
+    const d = new Date(date)
+    const dow = d.getDay()
+    const dom = d.getDate()
+
+    let m = 1.0
+    if (dow === 0 || dow === 6) m += 0.18       // weekend
+    else if (dow === 5) m += 0.10               // friday
+    else if (dow === 2 || dow === 3) m -= 0.12  // tue/wed cheapest
+    m += periodicDelta[dom % periodicDelta.length]
+
+    result[date] = Math.round(basePrice * m / 10) * 10
+  })
+  return result
 }
 
 // Mock inspiration destinations from Beijing, budget ¥800

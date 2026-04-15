@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { searchFlights } from '@/lib/variflight'
 import { addDays, formatDateKey } from '@/lib/price-utils'
-import { MOCK_CALENDAR } from '@/lib/mock-data'
+import { getMockCalendarPrices } from '@/lib/mock-data'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
 
   const today = new Date()
   const dates = Array.from({ length: days }, (_, i) => addDays(today, i + 1))
+  const dateKeys = dates.map(formatDateKey)
 
   const results: Record<string, number | null> = {}
   let isMock = false
@@ -36,21 +37,14 @@ export async function GET(req: NextRequest) {
         results[key] = null
       }
     })
-    // Stop batching if quota exhausted — use mock for remaining dates
     if (isMock) break
   }
 
-  // If mock mode, fill remaining dates from MOCK_CALENDAR
+  // Fill remaining dates with route-aware mock prices
   if (isMock) {
-    dates.forEach(d => {
-      const key = formatDateKey(d)
-      if (!results[key]) {
-        // Offset mock dates to match requested dates
-        const mockKeys = Object.keys(MOCK_CALENDAR)
-        const idx = dates.indexOf(d)
-        const mockKey = mockKeys[idx % mockKeys.length]
-        results[key] = MOCK_CALENDAR[mockKey] || null
-      }
+    const mockPrices = getMockCalendarPrices(dep, arr, dateKeys)
+    dateKeys.forEach(key => {
+      if (!results[key]) results[key] = mockPrices[key] || null
     })
   }
 
