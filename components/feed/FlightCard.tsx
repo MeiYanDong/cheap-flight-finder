@@ -28,6 +28,8 @@ export default function FlightCard({ flight, date, index = 0 }: FlightCardProps)
   const ctripUrl = getCtripUrl(depIATA, arrIATA, flightDate)
   const qunarUrl = getQunarUrl(flight.depCity, flight.arrCity, flightDate)
 
+  const detailUrl = `/flight?flightNo=${flight.flightNo}&airline=${encodeURIComponent(flight.airline)}&depCity=${encodeURIComponent(flight.depCity)}&arrCity=${encodeURIComponent(flight.arrCity)}&depTime=${encodeURIComponent(flight.depTime)}&arrTime=${encodeURIComponent(flight.arrTime)}&duration=${encodeURIComponent(flight.duration)}&cabin=${encodeURIComponent(flight.cabin)}&price=${flight.price}&date=${flightDate}&dep=${depCode}&arr=${arrCode}`
+
   const dateLabel = flightDate
     ? `${parseInt(flightDate.split('-')[1])}月${parseInt(flightDate.split('-')[2])}日`
     : ''
@@ -93,9 +95,9 @@ export default function FlightCard({ flight, date, index = 0 }: FlightCardProps)
             className="flex items-center justify-center gap-1 bg-warning hover:bg-deal-hover text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition-colors w-[76px]">
             去哪儿 <ExternalLink className="w-3 h-3" />
           </a>
-          <Link href={`/calendar?dep=${depCode}&arr=${arrCode}&depCity=${flight.depCity}&arrCity=${flight.arrCity}`}
+          <Link href={detailUrl}
             className="flex items-center justify-center gap-1 border border-border hover:border-primary hover:text-primary text-muted text-xs font-medium px-4 py-1.5 rounded-lg transition-colors w-[76px]">
-            日历 <ArrowRight className="w-3 h-3" />
+            详情 <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
       </div>
@@ -110,9 +112,9 @@ export default function FlightCard({ flight, date, index = 0 }: FlightCardProps)
           className="flex-1 flex items-center justify-center gap-1 bg-warning hover:bg-deal-hover text-white text-xs font-semibold py-2 rounded-lg transition-colors">
           去哪儿 <ExternalLink className="w-3 h-3" />
         </a>
-        <Link href={`/calendar?dep=${depCode}&arr=${arrCode}&depCity=${flight.depCity}&arrCity=${flight.arrCity}`}
+        <Link href={detailUrl}
           className="flex items-center justify-center gap-1 border border-border text-muted text-xs font-medium px-3 py-2 rounded-lg transition-colors">
-          日历 <ArrowRight className="w-3 h-3" />
+          详情 <ArrowRight className="w-3 h-3" />
         </Link>
       </div>
 
